@@ -9,7 +9,6 @@ import java.util.List;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.VoltageConfigs;
 import com.ctre.phoenix6.controls.Follower;
@@ -82,6 +81,7 @@ public class ShooterSubsystem extends SubsystemBase {
         motor.getConfigurator().apply(config);
     }
 
+    //Another methods
     public void stop() {
         for (final TalonFX motor : motors) motor.stopMotor();
     }
