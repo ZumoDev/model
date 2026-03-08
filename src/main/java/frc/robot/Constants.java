@@ -1,13 +1,12 @@
-//Package
 package frc.robot;
 
-//Create class
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+
 public class Constants {
     
-    //ID´s constnts
     public class IDs {
-
-        //Shooter constants
+        
         public class Shooter {
             public static final int bottomShootingMotorId = 0;
             public static final int topShootingMotorId = 0;
@@ -15,7 +14,6 @@ public class Constants {
             public static final int rightWristMotorId = 0;
         }
 
-        //Intake constants
         public class Intake {
             public static final int intakeMotorId = 0;
             public static final int leftWristMotorId = 0;
@@ -23,13 +21,11 @@ public class Constants {
         }
     }
 
-    //Limelights constants
     public class Limelights {
 
         public static final String shooterLimelightName = "limelight";
         public static final String extraLimelightName = "limelight2";
 
-        //ApriltagLimits constants
         public class AprilTagLimits {
             public static final double XError = 0.0;
             public static final double ZError = 2;
@@ -37,24 +33,20 @@ public class Constants {
             public static final double ZDeadband = 0.05; //cm
         }
 
-        //PID constants
         public class PID {
 
-            //Rotation constnts
             public class Rotation {
-                public static final double kP = 0.1;
-                public static final double kI = 0.05;
-                public static final double kD = 0.0;
+                public static double kP = 0.075;
+                public static double kI = 0.0;
+                public static double kD = 0.0;
             }
 
-            //X constants
             public class X {
-                public static final double kP = 4.75;
                 public static final double kI = 0.1;
+                public static final double kP = 4.75;
                 public static final double kD = 0.1;
             }
 
-            //Z constants
             public class Z {
                 public static final double kP = 2.5;
                 public static final double kI = 0.0;
@@ -63,10 +55,57 @@ public class Constants {
         }
     }
 
-    //Mechanisms constants
     public class Mechanisms {
         public static double shooterMountingAngle = 50.0; //degrees
         public static final double shooterMountingHeight = 0; //meters
         public static final double shooterWheelRadius = 0; //meters
+
+        public class Intake {
+            public class PID {
+                public static double kP = 0.0;
+                public static double kI = 0.0;
+                public static double kD = 0.0;
+            }
+        }
+
+        public class Hud {
+            public class PID {
+                public static double kP = 0.0;
+                public static double kI = 0.0;
+                public static double kD = 0.0;
+            }
+        }
+    }
+
+    public class FieldConstants {
+        public static final Pose2d startPose = new Pose2d(
+            0.0,
+            0.0,
+            new Rotation2d(0)
+        );
+    }
+
+    public class AprilTags {
+        public class RedAlliance {
+            public static final int frontHubId = 10;
+            public static final int frontSideHubId = 9;
+            public static final int bottomHubId = 2;
+            public static final int bottomSideHubId = 11;
+            public static final int topHubId = 5;
+            public static final int topSideHubId = 8;
+        }
+
+        public class BlueAlliance {
+            public static final int frontHubId = 25;
+            public static final int frontSideHubId = 26;
+            public static final int bottomHubId = 21;
+            public static final int bottomSideHubId = 24;
+            public static final int topHubId = 18;
+            public static final int topSideHubId = 27;
+        }
+    }
+
+    public class Vars {
+        static boolean isShooterAiming = true;
     }
 }

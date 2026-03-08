@@ -16,6 +16,7 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -27,11 +28,11 @@ import frc.robot.LimelightHelpers;
 import frc.robot.Constants.Mechanisms;
 
 public class ShooterSubsystem extends SubsystemBase {
-    // IMPORTANTE: Cambia estos IDs (1, 2, 3) por los que tengas en Phoenix Tuner X
     public final TalonFX bwMotor = new TalonFX(1);
-    public final TalonFX twMotor = new TalonFX(2);
-    public final TalonFX rsMotor = new TalonFX(3);
-    
+    public final TalonFX twMotor = new TalonFX(5);
+    public final TalonFX rsMotor = new TalonFX(1);
+    public final TalonFX lsMotor = new TalonFX(2);
+
     private final List<TalonFX> motors;
     private final VelocityVoltage velVol = new VelocityVoltage(0).withSlot(0);
     private final VoltageOut volOut = new VoltageOut(0);
@@ -40,12 +41,20 @@ public class ShooterSubsystem extends SubsystemBase {
     public ShooterSubsystem() {
         motors = List.of(bwMotor, twMotor, rsMotor);
 
-        configureMotor(bwMotor, InvertedValue.Clockwise_Positive);
+        configureMotor(bwMotor, InvertedValue.CounterClockwise_Positive);
         configureMotor(twMotor, InvertedValue.Clockwise_Positive);
-        configureMotor(rsMotor, InvertedValue.CounterClockwise_Positive);
+        //configureMotor(rsMotor, InvertedValue.CounterClockwise_Positive);
 
-        // Hacemos que bwMotor siga a twMotor automáticamente
-        bwMotor.setControl(new Follower(twMotor.getDeviceID(), MotorAlignmentValue.Aligned));
+        lsMotor.setControl(new Follower(rsMotor.getDeviceID(), MotorAlignmentValue.Aligned));
+        bwMotor.setControl(new Follower(twMotor.getDeviceID(), MotorAlignmentValue.Opposed));
+    }
+    //Metodo par obtener la tempertura más alta
+    public double getShooterTemp(){
+    double bwMotorTemp= bwMotor.getDeviceTemp().getValueAsDouble();
+    double twMotorTemp=twMotor.getDeviceTemp().getValueAsDouble();
+    double lsMotorTemp=lsMotor.getDeviceTemp().getValueAsDouble();
+    double rsMotorTemp=rsMotor.getDeviceTemp().getValueAsDouble();
+    return Math.max(Math.max(lsMotorTemp, rsMotorTemp),Math.max(bwMotorTemp, twMotorTemp));
     }
 
     private void configureMotor(TalonFX motor, InvertedValue invertDirection) {
@@ -66,14 +75,15 @@ public class ShooterSubsystem extends SubsystemBase {
                     .withSupplyCurrentLimit(Amps.of(70))
                     .withSupplyCurrentLimitEnable(true)
             )
-            // SLOT 0 DESCOMENTADO Y CONFIGURADO CON LOS CÁLCULOS
             .withSlot0(
                 new Slot0Configs()
-                    .withKP(0.11)  // Proporcional para recuperar velocidad
+                    .withKP(0.11)  
                     .withKI(0.0)
                     .withKD(0.0)
-                    .withKV(0.12)  // Feedforward (12V / 100 RPS)
-                    .withKS(0.2)   // Fricción estática (romper inercia)
+                    .withKV(0.12) 
+                    .withKS(0.2) 
+                    .withKG(1)
+                    .withGravityType(GravityTypeValue.Arm_Cosine)
             );
         
         motor.getConfigurator().apply(config);
@@ -89,6 +99,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void set(double speed) {
         rsMotor.set(speed);
+    }
+
+    public void setWristSpeed(double speed) {
+        twMotor.set(speed);
+        //bwMotor.set(speed);
     }
 
     public void setRPM(double rpm, TalonFX motor) {

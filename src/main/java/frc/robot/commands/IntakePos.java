@@ -25,7 +25,9 @@ public class IntakePos extends Command {
     }
 
     @Override
-    public void end(boolean isFinished) {}
+    public void end(boolean isFinished) {
+        sub.setSpeed(0.025);
+    }
 
     @Override
     public boolean isFinished() {

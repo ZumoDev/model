@@ -28,24 +28,34 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class IntakeSubsystem extends SubsystemBase {
 
     //Atributes
-    public TalonFX liMotor, riMotor, intakeMotor;
+    public TalonFX intakeMotor, indexerMotor;
     private final VelocityVoltage velVol = new VelocityVoltage(0).withSlot(0);
     private final VoltageOut volOut = new VoltageOut(0);
     private final PositionVoltage posvol = new PositionVoltage(0);
 
     //Constructor
     public IntakeSubsystem() {
-        liMotor = new TalonFX(0);
-        riMotor = new TalonFX(0);
-        intakeMotor = new TalonFX(0);
+        //liMotor = new TalonFX(0); //sparj
+        //riMotor = new TalonFX(0); //spark
+        intakeMotor = new TalonFX(3);
+        indexerMotor = new TalonFX(4);
 
-        configureMotor(liMotor, InvertedValue.CounterClockwise_Positive);
-        configureMotor(riMotor, InvertedValue.CounterClockwise_Positive);
+        //configureMotor(liMotor, InvertedValue.CounterClockwise_Positive);
+        //configureMotor(riMotor, InvertedValue.CounterClockwise_Positive);
         configureMotor(intakeMotor, InvertedValue.Clockwise_Positive);
-        liMotor.setControl(new Follower(riMotor.getDeviceID(), MotorAlignmentValue.Aligned));
+        configureMotor(indexerMotor, InvertedValue.Clockwise_Positive);
+        //liMotor.setControl(new Follower(riMotor.getDeviceID(), MotorAlignmentValue.Aligned));
     }
+    //Metodo pra publicar el vlaor mas alto de la tempertarua del intake
+    /*public double getIntakeTemp(){
+        double templiMotor= liMotor.getDeviceTemp().getValueAsDouble();
+        double tempriMotor=riMotor.getDeviceTemp().getValueAsDouble();
+        double tempIntakeMotor=riMotor.getDeviceTemp().getValueAsDouble();
+        double tempIndexermotor=riMotor.getDeviceTemp().getValueAsDouble();
+        return Math.max(Math.max(tempIntakeMotor, tempIndexermotor),Math.max(templiMotor, tempriMotor));
+    }*/
 
-    //Consfigure motor method
+    //Si sucede algun error, es porque el idiota de zumo le puso la misma config a todos los motores...
     private void configureMotor(TalonFX motor, InvertedValue invertDirection) {
         final TalonFXConfiguration config = new TalonFXConfiguration()
             .withMotorOutput(
@@ -91,15 +101,19 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeMotor.set(speed);
     }
 
+    public void setWristSpeed(double speed) {
+        //riMotor.set(speed);
+    }
+
     public void setPosition(double position) {
-        riMotor.setControl(posvol.withPosition(position));
+        //riMotor.setControl(posvol.withPosition(position));
     }
 
     public double getPosition() {
-        return riMotor.getPosition().getValueAsDouble();
+        return 0; //riMotor.getPosition().getValueAsDouble();
     }
 
-    public void startFeeder() {
-        setRPM(2000, intakeMotor);
+    public void setIndexerSpeed(double speed) {
+        indexerMotor.set(speed);
     }
 }

@@ -1,6 +1,5 @@
 /*
  * PLAN:
- * - zoom con LimelightHelpers.setCropWindow(nombre, minx, maxx, miny, maxy);
  * - Estimar distancia del AprilTag con Limelight "d = (h2-h1) / tan(a1+a2)"
  * - Calcular a q potencia debera disparar el Intake dependiendo de "d"
  * 
@@ -41,6 +40,7 @@ public class AprilTagTracker extends Command {
 
     @Override
     public void execute() {
+        //declarando variables
         double[] targetLocation = LimelightHelpers.getTargetPose_CameraSpace(limelightName);
         double tx = targetLocation[0];
         double tz = targetLocation[2];
@@ -50,10 +50,6 @@ public class AprilTagTracker extends Command {
         SwerveRequest.RobotCentric newRequest;
         
         if (LimelightHelpers.getTV(limelightName)) {
-
-            LimelightHelpers.setCropWindow(limelightName, 
-            yaw, tx, tz, yaw);
-
             double xOutput = xPID.calculate(tx, Constants.Limelights.AprilTagLimits.XError);
             double zOutput = zPID.calculate(tz, Constants.Limelights.AprilTagLimits.ZError);
             double rotationOutput = 0.0;
@@ -85,10 +81,6 @@ public class AprilTagTracker extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        LimelightHelpers.setCropWindow(limelightName, //no sirve
-            0, 0, 
-            0, 0);
-
         drivetrain.setControl(driveRequest.withVelocityX(0.0)
                                           .withVelocityY(0.0)
                                           .withRotationalRate(0.0));

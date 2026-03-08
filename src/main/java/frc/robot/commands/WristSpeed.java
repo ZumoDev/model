@@ -7,6 +7,7 @@ public class WristSpeed extends Command {
     private final ShooterSubsystem sub;
     private final double speed;
 
+    //Constructi
     public WristSpeed(ShooterSubsystem sub, double speed) {
         this.sub = sub;
         this.speed = speed;
@@ -18,16 +19,21 @@ public class WristSpeed extends Command {
 
     @Override
     public void execute() {
-        sub.set(speed);
+        sub.setWristSpeed(speed);
+        System.out.print("pos: " + sub.getWristPosition());
     }
 
     @Override
     public void end(boolean interrupted) {
-        sub.set(0);
+        sub.setWristSpeed(0.02);
     }
 
     @Override
     public boolean isFinished() {
         return false;
+
+        /*if (sub.getWristPosition() <= 5 && ) return false;
+        else if (sub.getWristPosition() >= 0.2) return true;
+        else return false;*/
     }
 }
