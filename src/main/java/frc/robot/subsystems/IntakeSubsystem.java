@@ -20,100 +20,90 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.PersistMode;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.ResetMode;
+import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.FeedbackSensor;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Ports;
 
 
 //Create class
 public class IntakeSubsystem extends SubsystemBase {
+    private final SparkMax leader   = new SparkMax(Ports.Intake.RIGHT_SPARK_ID, MotorType.kBrushless);
+    private final SparkMax follower = new SparkMax(Ports.Intake.LEFT_SPARK_ID, MotorType.kBrushless);
+    private final TalonFX  rollers  = new TalonFX(Ports.Intake.ROLLER_ID, Ports.RIO_BUS);
+    private final TalonFX  indexer  = new TalonFX(Ports.INDEXER_ID, Ports.RIO_BUS);
 
-    //Atributes
-    public TalonFX intakeMotor, indexerMotor;
-    private final VelocityVoltage velVol = new VelocityVoltage(0).withSlot(0);
-    private final VoltageOut volOut = new VoltageOut(0);
-    private final PositionVoltage posvol = new PositionVoltage(0);
+    private final RelativeEncoder           encoder;
+    private final SparkClosedLoopController pid;
 
-    //Constructor
+    // ── Positions (tunable) ──────────────────────────────────
+    public static final double ARM_UP      = 3.2;   // holds against gravity
+    public static final double ARM_DOWN    = 0;   // collect position
+    public static final double ARM_SHOOT_A = 3.2;   // firing oscillation A
+    public static final double ARM_SHOOT_B = 3.1;   // firing oscillation B
+
     public IntakeSubsystem() {
-        //liMotor = new TalonFX(0); //sparj
-        //riMotor = new TalonFX(0); //spark
-        intakeMotor = new TalonFX(3);
-        indexerMotor = new TalonFX(4);
+        SparkMaxConfig leaderCfg = new SparkMaxConfig();
+        leaderCfg.inverted(false);
+        leaderCfg.softLimit
+            .forwardSoftLimitEnabled(true)
+            .forwardSoftLimit(3.4)
+            .reverseSoftLimitEnabled(true)
+            .reverseSoftLimit(0);
+        leaderCfg.closedLoop
+            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+            .p(0.5, ClosedLoopSlot.kSlot0)
+            .i(0,   ClosedLoopSlot.kSlot0)
+            .d(0.05,   ClosedLoopSlot.kSlot0)
+            .outputRange(-1, 1, ClosedLoopSlot.kSlot0);
+        leader.configure(leaderCfg, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        //configureMotor(liMotor, InvertedValue.CounterClockwise_Positive);
-        //configureMotor(riMotor, InvertedValue.CounterClockwise_Positive);
-        configureMotor(intakeMotor, InvertedValue.Clockwise_Positive);
-        configureMotor(indexerMotor, InvertedValue.Clockwise_Positive);
-        //liMotor.setControl(new Follower(riMotor.getDeviceID(), MotorAlignmentValue.Aligned));
-    }
-    //Metodo pra publicar el vlaor mas alto de la tempertarua del intake
-    /*public double getIntakeTemp(){
-        double templiMotor= liMotor.getDeviceTemp().getValueAsDouble();
-        double tempriMotor=riMotor.getDeviceTemp().getValueAsDouble();
-        double tempIntakeMotor=riMotor.getDeviceTemp().getValueAsDouble();
-        double tempIndexermotor=riMotor.getDeviceTemp().getValueAsDouble();
-        return Math.max(Math.max(tempIntakeMotor, tempIndexermotor),Math.max(templiMotor, tempriMotor));
-    }*/
+        SparkMaxConfig followerCfg = new SparkMaxConfig();
+        followerCfg.follow(leader, true); // inverted follow
+        follower.configure(followerCfg, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    //Si sucede algun error, es porque el idiota de zumo le puso la misma config a todos los motores...
-    private void configureMotor(TalonFX motor, InvertedValue invertDirection) {
-        final TalonFXConfiguration config = new TalonFXConfiguration()
-            .withMotorOutput(
-                new MotorOutputConfigs()
-                    .withInverted(invertDirection)
-                    .withNeutralMode(NeutralModeValue.Coast)
-            )
-            .withVoltage(
-                new VoltageConfigs()
-                    .withPeakReverseVoltage(Volts.of(0))
-            )
-            .withCurrentLimits(
-                new CurrentLimitsConfigs()
-                    .withStatorCurrentLimit(Amps.of(120))
-                    .withStatorCurrentLimitEnable(true)
-                    .withSupplyCurrentLimit(Amps.of(70))
-                    .withSupplyCurrentLimitEnable(true)
-            )
-            .withSlot0(
-                new Slot0Configs()
-                    .withKP(0.5)
-                    .withKI(2)
-                    .withKD(0)
-                    .withKV(12.0 / RPM.of(6000).in(RotationsPerSecond)) // 12 volts when requesting max RPS
-            );
-        
-        motor.getConfigurator().apply(config);
+        encoder = leader.getEncoder();
+        pid     = leader.getClosedLoopController();
+
+        // Indexer — CounterClockwise = toward shooter
+        TalonFXConfiguration idxCfg = new TalonFXConfiguration();
+        idxCfg.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        indexer.getConfigurator().apply(idxCfg);
+
+        // Rollers — adjust inversion if needed after test
+        TalonFXConfiguration rolCfg = new TalonFXConfiguration();
+        rolCfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        rollers.getConfigurator().apply(rolCfg);
     }
 
-    public void stop() {
-        intakeMotor.set(0);
+    // ── Public API ────────────────────────────────────────────
+    public void setArmPosition(double pos) {
+        pid.setSetpoint(pos, ControlType.kPosition, ClosedLoopSlot.kSlot0);
     }
 
-    public void setPercentOutput(double percentOutput, TalonFX motor) {
-        motor.setControl(volOut.withOutput(Volts.of(percentOutput * 12)));
-    }
-
-    public void setRPM(double rpm, TalonFX motor) {
-        motor.setControl(velVol.withVelocity(RPM.of(rpm)));
-    }
-
-    public void setSpeed(double speed) {
-        intakeMotor.set(speed);
-    }
-
-    public void setWristSpeed(double speed) {
-        //riMotor.set(speed);
-    }
-
-    public void setPosition(double position) {
-        //riMotor.setControl(posvol.withPosition(position));
-    }
-
-    public double getPosition() {
-        return 0; //riMotor.getPosition().getValueAsDouble();
+    public void setRollerSpeed(double speed) {
+        rollers.set(speed);
     }
 
     public void setIndexerSpeed(double speed) {
-        indexerMotor.set(speed);
+        indexer.set(speed);
+    }
+
+    public double getArmPosition() {
+        return encoder.getPosition();
+    }
+
+    public void stopAll() {
+        rollers.stopMotor();
+        indexer.stopMotor();
     }
 }

@@ -21,16 +21,14 @@ public class IntakePos extends Command {
     @Override
     public void execute() {
         //obtener las dos posibles posiciones, segun PositionVoltage: adentro, y afuera
-        if (pos <= 0.1) sub.setPosition(pos);
+        if (pos <= 0.1) sub.setArmPosition(pos);
     }
 
     @Override
-    public void end(boolean isFinished) {
-        sub.setSpeed(0.025);
-    }
+    public void end(boolean isFinished) {}
 
     @Override
     public boolean isFinished() {
-        return Math.abs(pos - sub.getPosition()) <= 0.15;
+        return Math.abs(pos - sub.getArmPosition()) <= 0.15;
     }
 }

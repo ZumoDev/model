@@ -12,7 +12,10 @@ public class ATTRotation extends Command {
     private final SwerveRequest.FieldCentric driveRequest;
     private final PIDController limelightPID;
     private final double maxAngularRate;
-    private final String limelightName;
+    private String limelightName = Constants.Limelights.shooterLimelightName;
+
+    double tx = LimelightHelpers.getTX(limelightName);
+    double rotationOutput = 0.0;
 
     public ATTRotation(CommandSwerveDrivetrain drivetrain,
                            SwerveRequest.FieldCentric driveRequest,
@@ -29,29 +32,25 @@ public class ATTRotation extends Command {
 
     @Override
     public void initialize() {
-        // Configura pipeline al inicio
         LimelightHelpers.setPipelineIndex(limelightName, 1);
     }
 
     @Override
     public void execute() {
-        double tx = LimelightHelpers.getTX(limelightName);
-        double rotationOutput = 0.0;
-
         if (LimelightHelpers.getTV(limelightName)) {
             rotationOutput = limelightPID.calculate(tx, Constants.Limelights.AprilTagLimits.XError);
             rotationOutput = Math.max(Math.min(rotationOutput, maxAngularRate), -maxAngularRate);
 
-            System.out.println("tx: " + tx + " | rotOutput: " + rotationOutput);
+            //System.out.println("tx: " + tx + " | rotOutput: " + rotationOutput);
         } 
 
-        SwerveRequest.FieldCentric request = driveRequest
+        driveRequest
         .withVelocityX(0.0)
             .withVelocityY(0.0)
             .withRotationalRate(rotationOutput)
             .withDriveRequestType(com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType.OpenLoopVoltage);
 
-        drivetrain.setControl(request);
+        drivetrain.setControl(driveRequest);
     }
 
     @Override

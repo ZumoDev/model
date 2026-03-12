@@ -20,6 +20,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -36,13 +37,19 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.utils.CANManager;
+import frc.robot.utils.PowerManager;
+import frc.robot.utils.RobotDiagnostics;
 import frc.robot.commands.ATTRotation;
-import frc.robot.commands.AprilTagTracker;
 import frc.robot.Constants.AprilTags;
 import frc.robot.Constants.AprilTags.BlueAlliance;
 import frc.robot.Constants.AprilTags.RedAlliance;
 
 public class RobotContainer {
+    private final CANManager m_canManager = new CANManager();
+    private final PowerManager m_powerManager = new PowerManager();
+    private final RobotDiagnostics m_errorManager = new RobotDiagnostics();
+
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
@@ -61,6 +68,7 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
+    private final CommandXboxController joystick2 = new CommandXboxController(0);
     private final IntakeSubsystem intakeSub = new IntakeSubsystem();
     private final ShooterSubsystem shooterSub = new ShooterSubsystem();
 
@@ -88,7 +96,6 @@ public class RobotContainer {
     );
 
     public RobotContainer() {
-        SmartDashboard.putNumber("TimeLeft", 99);
         configureBindings();
     }
 
@@ -124,34 +131,52 @@ public class RobotContainer {
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
-        joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
-    
-        joystick.rightTrigger().whileTrue(Commands.parallel(
-            new StartShooter(shooterSub, 0.75, isCalculationEnabled),
+
+        //joystick 1
+        joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+
+        joystick.rightTrigger().whileTrue(new StartIntake(intakeSub, 0.9));   // absorber
+        joystick.leftTrigger().whileTrue(new StartIntake(intakeSub, -0.75));   // expulsar
+        joystick.rightBumper().onTrue(new IntakePos(intakeSub, 3.5));            // bajar (recolectar)
+        joystick.leftBumper().onTrue(new IntakePos(intakeSub, 0));             // subir (home)
+        joystick.x().whileTrue(new Indexer(intakeSub, 0.5));
+        joystick.b().whileTrue(new Indexer(intakeSub, -0.5));
+
+        //
+        joystick2.rightTrigger().whileTrue(Commands.parallel(
+            new StartShooter(shooterSub, intakeSub, 0.75, isCalculationEnabled, this::getClosestAprilTag),
             new ATTRotation(drivetrain, drive, rotationPID, MaxAngularRate, limelightName)
                 .onlyIf(() -> isCalculationEnabled)
-        )); 
-        joystick.leftTrigger().whileTrue(new StartIntake(intakeSub, 0.75));
+        ));
+
+        joystick2.leftTrigger().whileTrue(new StartIntake(intakeSub, 0.75));
 
         //movimiento en circunferencia...
-        joystick.rightBumper().onTrue(
+        joystick2.rightBumper().onTrue(
             Commands.runOnce(() -> isCalculationEnabled = !isCalculationEnabled)
         );
-        joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-
-        joystick.y().onTrue(new IntakePos(intakeSub, 1)); //definir posiciones
-        joystick.x().onTrue(new IntakePos(intakeSub, 0));
-        //cambiar por flechas
-        joystick.b().whileTrue(new WristSpeed(shooterSub, 0.075));
-        joystick.a().whileTrue(new WristSpeed(shooterSub, -0.075));  
-
-        System.out.println("PRUEBA");
     }
 
     public Command getAutonomousCommand() {
         return Commands.print("No autonomous command configured");
+    }
+
+    public void updateCANTelemetry() {
+        m_canManager.update();
+    }
+
+    public void updatePowerTelemetry() {
+    m_powerManager.update();
+
+    }
+    public void updateTelemetry() {
+        m_errorManager.update();
+    }
+
+    public void logRobotError(String msg) {
+        m_errorManager.addLog(msg, true);
     }
     
     public boolean isHubActive() {
@@ -233,12 +258,8 @@ public class RobotContainer {
 
                     Pose3d targetLocation = tag.getTargetPose_CameraSpace();
                     Translation3d translation = targetLocation.getTranslation();
-    
-                    /*double tx = translation.getX();
-                    double ty = translation.getY();
-                    double tz = translation.getZ();*/
 
-                    double distance = translation.getNorm(); //Math.sqrt(tx*tx + ty*ty + tz*tz);
+                    double distance = translation.getNorm(); 
 
                     if (distance < closestDistance) {
                         closestTag = tag;
@@ -249,5 +270,54 @@ public class RobotContainer {
         }
 
         return closestTag;
+    }
+
+    public void updateVisionDashboard() {
+        // 1. Obtener la pose del objetivo relativa a la cámara (Camera Space)
+        // El arreglo contiene: [x, y, z, roll, pitch, yaw]
+        double[] targetPose = LimelightHelpers.getTargetPose_CameraSpace("limelight");
+
+        // 2. Validación de seguridad (si no hay target, el arreglo suele estar vacío o en 0)
+        // tv es 1 si la Limelight ve un objetivo
+        boolean hasTarget = LimelightHelpers.getTV("limelight");
+
+        if (hasTarget && targetPose.length >= 3) {
+            // Extraemos las coordenadas 3D (en metros)
+            double x = targetPose[0]; // Desplazamiento lateral (izquierda/derecha)
+            double y = targetPose[1]; // Desplazamiento vertical (arriba/abajo)
+            double z = targetPose[2]; // Profundidad (hacia adelante)
+
+            // 3. LA FÓRMULA MAESTRA: Distancia Euclidiana 3D
+            // Calcula la línea recta real desde el lente hasta el AprilTag
+            double distance = Math.sqrt(
+                Math.pow(x, 2) + 
+                Math.pow(y, 2) + 
+                Math.pow(z, 2)
+            );
+
+            // 4. Publicar al Widget (Llave: "TargetDistance")
+            SmartDashboard.putNumber("TargetDistance", distance);
+            
+            // Opcional: Publicar TX para que el radar del widget se mueva
+            SmartDashboard.putNumber("TargetTX", LimelightHelpers.getTX("limelight"));
+            
+        } else {
+            // Si no hay target, mandamos 0 para que el widget muestre "---"
+            SmartDashboard.putNumber("TargetDistance", 0.0);
+        }
+    }
+
+    //METODO PARA EL CAN ANCHO DE BANDA, RIO TEMP
+    public void updateSystemHealth() {
+        // 1. CAN Bus Utilization
+        var canStatus = RobotController.getCANStatus();
+        // Enviamos decimal (0.0 a 1.0) porque tu widget hace (canUsage * 100)
+        double canUsage = canStatus.percentBusUtilization / 100.0; 
+        // En 2026 intentaron separar la carga del sistema de la carga del proceso
+        double rioTemp = RobotController.getCPUTemp();
+
+        // PUBLICACIÓN
+        SmartDashboard.putNumber("CANUsage", canUsage);
+        SmartDashboard.putNumber("RoboRIOTemp", rioTemp);
     }
 }

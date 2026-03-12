@@ -105,6 +105,17 @@ public class Constants {
         }
     }
 
+    public static final class Shooter {
+        /** TODO: RPM para disparo — punto de partida sugerido 3000, ajustar por distancia al HUB */
+        public static final double SHOOT_RPM = 3000.0;
+        /** TODO: rotaciones del rotor para angulo de disparo — medir con Tuner X en robot */
+        public static final double WRIST_ANGLE_SHOOT = 5.0;
+        /** TODO: posicion de reposo — debe ser 0 si el encoder se resetea al iniciar */
+        public static final double WRIST_ANGLE_HOME = 0.0;
+        /** velocidad del feeder al alimentar — 0.75 es punto de partida conservador */
+        public static final double FEEDER_SPEED = 0.75;
+    }
+
     public class Vars {
         static boolean isShooterAiming = true;
     }
