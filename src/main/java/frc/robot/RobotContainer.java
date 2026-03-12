@@ -109,24 +109,31 @@ public class RobotContainer {
 
 NamedCommands.registerCommand(
     "IntakeDown",
-    new IntakePos(intakeSub, 3.5).withTimeout(0.5)
+    new IntakePos(intakeSub, 3.8).withTimeout(1)
+);
+NamedCommands.registerCommand(
+    "IntakeUp",
+    new IntakePos(intakeSub, 0).withTimeout(1)
 );
 
 NamedCommands.registerCommand(
     "IntakeOn",
-    new StartIntake(intakeSub, 0.9).withTimeout(4.0)
+    new StartIntake(intakeSub, 1).withTimeout(4.0)
 );
 
 NamedCommands.registerCommand(
     "StartShooter",
-    new StartShooter(shooterSub, intakeSub, 1, false, () -> null)
-        .withTimeout(2.0)
+    Commands.parallel(
+        new StartShooter(shooterSub, intakeSub, 1, false, () -> null),
+        new Indexer(intakeSub, 0.5)
+    ).withTimeout(2.0)
 );
 
 NamedCommands.registerCommand(
     "ShooterOn",
     Commands.parallel(
-        new StartShooter(shooterSub, intakeSub, 1, false, () -> null)
+        new StartShooter(shooterSub, intakeSub, 1, false, () -> null),
+        new Indexer(intakeSub, 0.5)
     ).withTimeout(5.0)
 );
 

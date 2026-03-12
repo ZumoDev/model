@@ -35,7 +35,29 @@
     {
       "name": "IntakeDown",
       "waypointRelativePos": 0.31450719822812867,
-      "endWaypointRelativePos": 0.4473975636766333,
+      "endWaypointRelativePos": 0.362204724409449,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "IntakeDown"
+        }
+      }
+    },
+    {
+      "name": "IntakeUp",
+      "waypointRelativePos": 0.44544431946006685,
+      "endWaypointRelativePos": 0.48818897637795167,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "IntakeUp"
+        }
+      }
+    },
+    {
+      "name": "IntakeDown",
+      "waypointRelativePos": 0.503937007874016,
+      "endWaypointRelativePos": 0.5714285714285717,
       "command": {
         "type": "named",
         "data": {
@@ -45,7 +67,7 @@
     },
     {
       "name": "IntakeOn",
-      "waypointRelativePos": 0.547065337763012,
+      "waypointRelativePos": 0.5849268841394828,
       "endWaypointRelativePos": 1.0,
       "command": {
         "type": "named",
