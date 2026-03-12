@@ -36,7 +36,7 @@ public class Constants {
         public class PID {
 
             public class Rotation {
-                public static double kP = 0.075;
+                public static double kP = 0.1;
                 public static double kI = 0.0;
                 public static double kD = 0.0;
             }
@@ -107,7 +107,7 @@ public class Constants {
 
     public static final class Shooter {
         /** TODO: RPM para disparo — punto de partida sugerido 3000, ajustar por distancia al HUB */
-        public static final double SHOOT_RPM = 3000.0;
+        public static final double SHOOT_RPM = 5000.0;
         /** TODO: rotaciones del rotor para angulo de disparo — medir con Tuner X en robot */
         public static final double WRIST_ANGLE_SHOOT = 5.0;
         /** TODO: posicion de reposo — debe ser 0 si el encoder se resetea al iniciar */

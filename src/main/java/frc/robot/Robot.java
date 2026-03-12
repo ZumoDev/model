@@ -39,12 +39,6 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     LimelightHelpers.setPipelineIndex(Constants.Limelights.shooterLimelightName, 1);
 
-    m_robotContainer.drivetrain.resetPose(
-      new Pose2d(
-        4, 3, new Rotation2d(0)
-      )
-    );
-
     //dashboard.sendPidData();
 
      timeLeft=Timer.getMatchTime();

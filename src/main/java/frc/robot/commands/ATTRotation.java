@@ -13,8 +13,6 @@ public class ATTRotation extends Command {
     private final PIDController limelightPID;
     private final double maxAngularRate;
     private String limelightName = Constants.Limelights.shooterLimelightName;
-
-    double tx = LimelightHelpers.getTX(limelightName);
     double rotationOutput = 0.0;
 
     public ATTRotation(CommandSwerveDrivetrain drivetrain,
@@ -37,6 +35,8 @@ public class ATTRotation extends Command {
 
     @Override
     public void execute() {
+        double tx = LimelightHelpers.getTX(limelightName);
+
         if (LimelightHelpers.getTV(limelightName)) {
             rotationOutput = limelightPID.calculate(tx, Constants.Limelights.AprilTagLimits.XError);
             rotationOutput = Math.max(Math.min(rotationOutput, maxAngularRate), -maxAngularRate);

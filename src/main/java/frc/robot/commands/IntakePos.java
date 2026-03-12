@@ -20,15 +20,18 @@ public class IntakePos extends Command {
 
     @Override
     public void execute() {
-        //obtener las dos posibles posiciones, segun PositionVoltage: adentro, y afuera
-        if (pos <= 0.1) sub.setArmPosition(pos);
+        // Enviar la posición objetivo al subsistema en cada ciclo
+        sub.setPosition(pos);
     }
 
     @Override
-    public void end(boolean isFinished) {}
+    public void end(boolean isFinished) {
+        sub.setArmSpeed(0.025); // torque de sostenimiento contra la gravedad (solo NEOs del brazo)
+    }
 
     @Override
     public boolean isFinished() {
-        return Math.abs(pos - sub.getArmPosition()) <= 0.15;
+        // Terminar cuando el mecanismo esté dentro de 0.1 rotaciones del objetivo
+        return Math.abs(pos - sub.getPosition()) <= 0.1;
     }
 }

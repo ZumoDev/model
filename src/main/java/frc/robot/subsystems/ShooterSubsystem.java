@@ -140,7 +140,6 @@ public class ShooterSubsystem extends SubsystemBase {
      * Se pasa el motor explícitamente para controlar solo uno si es necesario.
      */
     public void setRPM(double rpm, TalonFX motor) {
-        targetRPM = rpm;
         motor.setControl(velVol.withVelocity(RPM.of(rpm)));
     }
 
@@ -154,6 +153,7 @@ public class ShooterSubsystem extends SubsystemBase {
         return twMotor.getPosition().getValueAsDouble();
     }
 
+    //mejor voy a usar valores de -1.0 a 1.0, en lugar de rpm, porque rpm no funciona
     public double calculateRPMWithITM(String limelightName, double distance) {
         final InterpolatingDoubleTreeMap table = new InterpolatingDoubleTreeMap();
 
@@ -193,7 +193,7 @@ public class ShooterSubsystem extends SubsystemBase {
             final boolean isInVelocityMode = motor.getAppliedControl().equals(velVol);
             final AngularVelocity currentVelocity = motor.getVelocity().getValue();
             final AngularVelocity targetVelocity = velVol.getVelocityMeasure();
-            return isInVelocityMode && currentVelocity.isNear(targetVelocity, RPM.of(Constants.Shooter.SHOOT_RPM));
+            return isInVelocityMode && currentVelocity.isNear(targetVelocity, RPM.of(100));
         });
     }
 

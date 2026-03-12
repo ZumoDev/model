@@ -14,12 +14,12 @@ public class StartIntake extends Command {
 
     @Override
     public void execute() {
-        sub.setRollerSpeed(speed);
+        sub.setSpeed(speed);
     }
 
     @Override
     public void end(boolean interrupted) {
-        sub.setRollerSpeed(0);
+        sub.setSpeed(0);
     }
 
     @Override

@@ -22,7 +22,7 @@ public class StartShooter extends Command {
         this.speed = speed;
         this.isCalculationEnabled = isCalculationEnabled;
         this.closestTagSupplier = closestTagSupplier;
-        addRequirements(sub, intakeSub);
+        addRequirements(sub);
     }
 
     @Override
@@ -30,7 +30,10 @@ public class StartShooter extends Command {
 
     @Override
     public void execute() {
-        var tag = closestTagSupplier.get();
+        boolean goingUp = true;
+        double POS_TOP = 3.5;
+        double POS_BOTTOM = 2.25;
+        /*var tag = closestTagSupplier.get();
         String limelightName = Constants.Limelights.shooterLimelightName;
 
         if (sub.isVelocityWithinTolerance()) {
@@ -47,7 +50,15 @@ public class StartShooter extends Command {
             }
 
             else sub.set(speed);
+        }*/
+        sub.set(speed);
+
+        //if (sub.isVelocityWithinTolerance()) {
+
+        /*} else {
+            intakeSub.setIndexerSpeed(0);
         }
+    }*/
     }
 
     @Override

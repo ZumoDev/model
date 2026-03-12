@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.Indexer;
 import frc.robot.commands.IntakePos;
+import frc.robot.commands.IntakeSpeed;
 import frc.robot.commands.StartIntake;
 import frc.robot.commands.StartShooter;
 import frc.robot.commands.WristPos;
@@ -40,6 +41,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.utils.CANManager;
 import frc.robot.utils.PowerManager;
 import frc.robot.utils.RobotDiagnostics;
+import frc.robot.utils.RobotPoseEstimator;
 import frc.robot.commands.ATTRotation;
 import frc.robot.Constants.AprilTags;
 import frc.robot.Constants.AprilTags.BlueAlliance;
@@ -130,21 +132,29 @@ public class RobotContainer {
         joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-        // reset the field-centric heading on left bumper press
-
         drivetrain.registerTelemetry(logger::telemeterize);
 
         //joystick 1
-        joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        joystick.b().onTrue(new IntakePos(intakeSub, -2.75));
+        joystick.a().onTrue(new IntakePos(intakeSub, 0));
+        joystick.x().whileTrue(drivetrain.applyRequest(() -> brake));
+        //joystick.x().whileTrue(new WristSpeed(shooterSub, 0.075));
+        //joystick.y().whileTrue(new WristSpeed(shooterSub, -0.075));
+        joystick.rightTrigger().whileTrue(new StartShooter(shooterSub, intakeSub, 1, isCalculationEnabled, null));
+        joystick.rightBumper().toggleOnTrue(new StartIntake(intakeSub, 0.9));        
+        joystick.leftTrigger().whileTrue(new Indexer(intakeSub, 0.75));
+        joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        joystick.rightTrigger().whileTrue(new StartIntake(intakeSub, 0.9));   // absorber
-        joystick.leftTrigger().whileTrue(new StartIntake(intakeSub, -0.75));   // expulsar
-        joystick.rightBumper().onTrue(new IntakePos(intakeSub, 3.5));            // bajar (recolectar)
-        joystick.leftBumper().onTrue(new IntakePos(intakeSub, 0));             // subir (home)
-        joystick.x().whileTrue(new Indexer(intakeSub, 0.5));
-        joystick.b().whileTrue(new Indexer(intakeSub, -0.5));
 
-        //
+        /*joystick.rightTrigger().whileTrue(Commands.parallel(
+            new StartShooter(
+                shooterSub, intakeSub, shooterSub.calculateRPMWithITM
+                    (limelightName, LimelightHelpers.getTargetPose3d_CameraSpace(limelightName).getZ()), 
+                isCalculationEnabled, null),
+            new ATTRotation(drivetrain, drive, rotationPID, MaxAngularRate, limelightName)
+        ));*/
+
+        /*
         joystick2.rightTrigger().whileTrue(Commands.parallel(
             new StartShooter(shooterSub, intakeSub, 0.75, isCalculationEnabled, this::getClosestAprilTag),
             new ATTRotation(drivetrain, drive, rotationPID, MaxAngularRate, limelightName)
@@ -156,7 +166,7 @@ public class RobotContainer {
         //movimiento en circunferencia...
         joystick2.rightBumper().onTrue(
             Commands.runOnce(() -> isCalculationEnabled = !isCalculationEnabled)
-        );
+        );*/
     }
 
     public Command getAutonomousCommand() {
