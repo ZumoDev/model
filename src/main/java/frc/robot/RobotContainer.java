@@ -21,6 +21,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -44,6 +45,10 @@ import frc.robot.commands.ATTRotation;
 import frc.robot.Constants.AprilTags;
 import frc.robot.Constants.AprilTags.BlueAlliance;
 import frc.robot.Constants.AprilTags.RedAlliance;
+
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 public class RobotContainer {
     private final CANManager m_canManager = new CANManager();
@@ -83,6 +88,9 @@ public class RobotContainer {
         Constants.Limelights.PID.Rotation.kD
     );
 
+        private final SendableChooser<Command> autoChooser;
+
+
     public static final List<Integer> redAllianceTags = List.of(
         RedAlliance.bottomHubId, RedAlliance.bottomSideHubId,
         RedAlliance.topHubId, RedAlliance.topSideHubId,
@@ -96,6 +104,35 @@ public class RobotContainer {
     );
 
     public RobotContainer() {
+
+ // ===== NAMED COMMANDS =====
+
+NamedCommands.registerCommand(
+    "IntakeDown",
+    new IntakePos(intakeSub, 3.5).withTimeout(0.5)
+);
+
+NamedCommands.registerCommand(
+    "IntakeOn",
+    new StartIntake(intakeSub, 0.9).withTimeout(4.0)
+);
+
+NamedCommands.registerCommand(
+    "StartShooter",
+    new StartShooter(shooterSub, intakeSub, 1, false, () -> null)
+        .withTimeout(2.0)
+);
+
+NamedCommands.registerCommand(
+    "ShooterOn",
+    Commands.parallel(
+        new StartShooter(shooterSub, intakeSub, 1, false, () -> null)
+    ).withTimeout(5.0)
+);
+
+          autoChooser = AutoBuilder.buildAutoChooser();
+        SmartDashboard.putData("Autonomous", autoChooser);
+
         configureBindings();
     }
 
@@ -160,7 +197,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return Commands.print("No autonomous command configured");
+       return autoChooser.getSelected();
     }
 
     public void updateCANTelemetry() {

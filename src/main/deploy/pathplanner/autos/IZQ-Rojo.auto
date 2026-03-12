@@ -1,0 +1,49 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "0-0-IzqR"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShooterOn"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "0-1-IzqR"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1-IzqR"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "2-IzqR"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShooterOn"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Red Alliance",
+  "choreoAuto": false
+}
