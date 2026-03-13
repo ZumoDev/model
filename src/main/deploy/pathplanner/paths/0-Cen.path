@@ -44,28 +44,6 @@
       }
     },
     {
-      "name": "IntakeUp",
-      "waypointRelativePos": 0.44544431946006685,
-      "endWaypointRelativePos": 0.48818897637795167,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "IntakeUp"
-        }
-      }
-    },
-    {
-      "name": "IntakeDown",
-      "waypointRelativePos": 0.503937007874016,
-      "endWaypointRelativePos": 0.5714285714285717,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "IntakeDown"
-        }
-      }
-    },
-    {
       "name": "IntakeOn",
       "waypointRelativePos": 0.5849268841394828,
       "endWaypointRelativePos": 1.0,

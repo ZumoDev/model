@@ -118,14 +118,14 @@ NamedCommands.registerCommand(
 
 NamedCommands.registerCommand(
     "IntakeOn",
-    new StartIntake(intakeSub, 1).withTimeout(4.0)
+    new StartIntake(intakeSub, 1).withTimeout(6.0)
 );
 
 NamedCommands.registerCommand(
     "StartShooter",
     Commands.parallel(
         new StartShooter(shooterSub, intakeSub, 1, false, () -> null),
-        new Indexer(intakeSub, 0.5)
+        new Indexer(intakeSub, -0.5)
     ).withTimeout(2.0)
 );
 
@@ -133,7 +133,7 @@ NamedCommands.registerCommand(
     "ShooterOn",
     Commands.parallel(
         new StartShooter(shooterSub, intakeSub, 1, false, () -> null),
-        new Indexer(intakeSub, 0.5)
+        new Indexer(intakeSub, -0.5)
     ).withTimeout(5.0)
 );
 
