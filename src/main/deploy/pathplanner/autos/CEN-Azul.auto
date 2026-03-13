@@ -13,13 +13,25 @@
         {
           "type": "named",
           "data": {
-            "name": "ShooterInitial"
+            "name": "IntakeDown"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.25
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "IntakeDown"
+            "name": "ShooterInitial"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.25
           }
         },
         {
