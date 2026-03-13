@@ -17,11 +17,11 @@
     {
       "anchor": {
         "x": 2.9,
-        "y": 4.6
+        "y": 4.0
       },
       "prevControl": {
         "x": 1.9,
-        "y": 4.6
+        "y": 4.0
       },
       "nextControl": null,
       "isLocked": false,
@@ -49,7 +49,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -20.0
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": "Alianza-Azul-Centro",
