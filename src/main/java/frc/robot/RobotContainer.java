@@ -46,6 +46,9 @@ import frc.robot.commands.ATTRotation;
 import frc.robot.Constants.AprilTags;
 import frc.robot.Constants.AprilTags.BlueAlliance;
 import frc.robot.Constants.AprilTags.RedAlliance;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 public class RobotContainer {
     private final CANManager m_canManager = new CANManager();
@@ -70,7 +73,6 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
-    private final CommandXboxController joystick2 = new CommandXboxController(0);
     private final IntakeSubsystem intakeSub = new IntakeSubsystem();
     private final ShooterSubsystem shooterSub = new ShooterSubsystem();
 
@@ -97,7 +99,45 @@ public class RobotContainer {
         BlueAlliance.frontHubId, BlueAlliance.frontSideHubId
     );
 
-    public RobotContainer() {
+    private final SendableChooser<Command> autoChooser;
+
+    public RobotContainer() {        
+         // ===== NAMED COMMANDS =====
+
+        NamedCommands.registerCommand(
+            "IntakeDown",
+            new IntakePos(intakeSub, 3.3).withTimeout(1)
+        );
+
+        NamedCommands.registerCommand(
+        "IntakeUp",
+        new IntakePos(intakeSub, 0).withTimeout(1)
+        );
+
+        NamedCommands.registerCommand(
+            "IntakeOn",
+            new StartIntake(intakeSub, 1).withTimeout(4.0)
+        );
+
+        NamedCommands.registerCommand(
+            "StartShooter",
+            Commands.parallel(
+                new StartShooter(shooterSub, intakeSub, 1, false, () -> null),
+                new Indexer(intakeSub, -0.5)
+            ).withTimeout(2.0)
+        );
+
+        NamedCommands.registerCommand(
+            "ShooterOn",
+            Commands.parallel(
+                new StartShooter(shooterSub, intakeSub, 1, false, () -> null),
+                new Indexer(intakeSub, -0.5)
+            ).withTimeout(5.0)
+        );
+
+        autoChooser = AutoBuilder.buildAutoChooser();
+        SmartDashboard.putData("Autonomous", autoChooser);
+
         configureBindings();
     }
 
@@ -131,20 +171,19 @@ public class RobotContainer {
         joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
         joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-
+ 
         drivetrain.registerTelemetry(logger::telemeterize);
 
         //joystick 1
-        joystick.b().onTrue(new IntakePos(intakeSub, -2.75));
+        joystick.b().onTrue(new IntakePos(intakeSub, 3.25));
         joystick.a().onTrue(new IntakePos(intakeSub, 0));
         joystick.x().whileTrue(drivetrain.applyRequest(() -> brake));
         //joystick.x().whileTrue(new WristSpeed(shooterSub, 0.075));
         //joystick.y().whileTrue(new WristSpeed(shooterSub, -0.075));
         joystick.rightTrigger().whileTrue(new StartShooter(shooterSub, intakeSub, 1, isCalculationEnabled, null));
-        joystick.rightBumper().toggleOnTrue(new StartIntake(intakeSub, 0.9));        
-        joystick.leftTrigger().whileTrue(new Indexer(intakeSub, 0.75));
+        joystick.rightBumper().whileTrue(new StartIntake(intakeSub, 0.75));        
+        joystick.leftTrigger().whileTrue(new Indexer(intakeSub, -0.8 ));
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-
 
         /*joystick.rightTrigger().whileTrue(Commands.parallel(
             new StartShooter(
@@ -170,7 +209,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return Commands.print("No autonomous command configured");
+        return autoChooser.getSelected();
     }
 
     public void updateCANTelemetry() {

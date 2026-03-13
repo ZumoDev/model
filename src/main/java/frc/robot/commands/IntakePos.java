@@ -16,6 +16,7 @@ public class IntakePos extends Command {
     public IntakePos(IntakeSubsystem sub, double pos) {
         this.sub = sub;
         this.pos = pos;
+        addRequirements(sub);
     }
 
     @Override
@@ -26,7 +27,7 @@ public class IntakePos extends Command {
 
     @Override
     public void end(boolean isFinished) {
-        sub.setArmSpeed(0.025); // torque de sostenimiento contra la gravedad (solo NEOs del brazo)
+        //sub.setArmSpeed(0); // torque de sostenimiento contra la gravedad (solo NEOs del brazo)
     }
 
     @Override

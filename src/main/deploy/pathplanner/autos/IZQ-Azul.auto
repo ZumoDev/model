@@ -1,0 +1,49 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "0-0-Izq"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShooterOn"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "0-1-Izq"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1-Izq"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "2-Izq"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShooterOn"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Blue Alliance",
+  "choreoAuto": false
+}

@@ -40,7 +40,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
     // Controlador de lazo cerrado y encoder del motor izquierdo (líder)
     private SparkClosedLoopController closedLoopController;
+    private SparkClosedLoopController closedLoopController2;
     private RelativeEncoder encoder;
+    private RelativeEncoder encoder2;
 
     // Motor de rodillos de la intake (Kraken X44 TalonFX, ecosistema CTRE)
     public TalonFX rollerMotor;
@@ -62,19 +64,27 @@ public class IntakeSubsystem extends SubsystemBase {
         SparkMaxConfig leaderConfig = new SparkMaxConfig();
         leaderConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-            .p(0.2, ClosedLoopSlot.kSlot0)
+            .p(0.1, ClosedLoopSlot.kSlot0)
             .i(0.0, ClosedLoopSlot.kSlot0)
             .d(0.0, ClosedLoopSlot.kSlot0);
         intakeMotorLeft.configure(leaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         // Motor derecho sigue al izquierdo (invertido para giro opuesto)
         SparkMaxConfig followerConfig = new SparkMaxConfig();
-        followerConfig.follow(intakeMotorLeft, true);
+        followerConfig.closedLoop
+            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+            .p(0.1, ClosedLoopSlot.kSlot0)
+            .i(0.0, ClosedLoopSlot.kSlot0)
+            .d(0.0, ClosedLoopSlot.kSlot0);
+        //followerConfig.follow(intakeMotorLeft);
+        followerConfig.inverted(true);
         intakeMotorRight.configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         // Obtener referencias al controlador PID y encoder del líder
         closedLoopController = intakeMotorLeft.getClosedLoopController();
+        closedLoopController2 = intakeMotorRight.getClosedLoopController();
         encoder = intakeMotorLeft.getEncoder();
+        encoder2 = intakeMotorRight.getEncoder();
 
         // Rodillos de la intake (Kraken X44 TalonFX en bus RIO)
         rollerMotor = new TalonFX(Ports.Intake.ROLLER_ID, Ports.RIO_BUS);
@@ -155,6 +165,7 @@ public class IntakeSubsystem extends SubsystemBase {
     // Posición 0 = home (arriba), posición 4 = recolección (abajo)
     public void setPosition(double position) {
         closedLoopController.setSetpoint(position, ControlType.kPosition, ClosedLoopSlot.kSlot0);
+        closedLoopController2.setSetpoint(position, ControlType.kPosition, ClosedLoopSlot.kSlot0);
     }
 
     public double getPosition() {

@@ -121,10 +121,10 @@ public final class Ports {
          * Se configura con SparkMaxConfig, no con Phoenix Tuner X.
          * Para diagnóstico usar REV Hardware Client.
          */
-        public static final int LEFT_SPARK_ID = 18;
+        public static final int LEFT_SPARK_ID = 15;
 
         /** SPARK MAX derecho de la intake. */
-        public static final int RIGHT_SPARK_ID = 15;
+        public static final int RIGHT_SPARK_ID = 18;
 
         public static final int ROLLER_ID = 28;
 
