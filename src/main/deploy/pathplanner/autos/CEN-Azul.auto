@@ -29,12 +29,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "IntakeOn"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "1-Cen"

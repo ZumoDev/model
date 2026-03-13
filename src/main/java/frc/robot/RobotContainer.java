@@ -114,7 +114,7 @@ NamedCommands.registerCommand(
 
 NamedCommands.registerCommand(
     "IntakeOn",
-    new StartIntake(intakeSub, 1).withTimeout(4.0)
+    new StartIntake(intakeSub, 1).withTimeout(3.0)
 );
 
 NamedCommands.registerCommand(
