@@ -17,15 +17,15 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "1-CR"
+            "name": "IntakeDown"
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "IntakeOn"
+            "pathName": "1-CR"
           }
         },
         {
