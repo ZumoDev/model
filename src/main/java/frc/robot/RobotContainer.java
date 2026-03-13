@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -129,16 +130,14 @@ NamedCommands.registerCommand(
     "ShooterInitial",
     Commands.parallel(
         new StartShooter(shooterSub, intakeSub, 1, false, () -> null),
-        new Indexer(intakeSub, -0.5)
-    ).withTimeout(2.0)
+        Commands.sequence(Commands.waitSeconds(0.5), new Indexer(intakeSub, -0.5).withTimeout(2.0)))
 );
 
 NamedCommands.registerCommand(
     "ShooterOn",
-    Commands.parallel(
+     Commands.parallel(
         new StartShooter(shooterSub, intakeSub, 1, false, () -> null),
-        new Indexer(intakeSub, -0.5)
-    ).withTimeout(5.0)
+        Commands.sequence(Commands.waitSeconds(0.5), new Indexer(intakeSub, -0.5).withTimeout(2.0)))
 );
 
 NamedCommands.registerCommand(
