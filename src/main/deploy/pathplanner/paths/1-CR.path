@@ -20,8 +20,8 @@
         "y": 2.079146919431279
       },
       "prevControl": {
-        "x": 14.941855535368129,
-        "y": 1.822090342250096
+        "x": 13.353068720379149,
+        "y": 1.5095853080568715
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,19 +33,19 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "IntakeDown",
+      "name": "IntakeDownUpDown",
       "waypointRelativePos": 0.38245219347581566,
-      "endWaypointRelativePos": 0.4364454443194602,
+      "endWaypointRelativePos": 0.8188976377952765,
       "command": {
         "type": "named",
         "data": {
-          "name": "IntakeDown"
+          "name": "IntakeDownUpDown"
         }
       }
     },
     {
       "name": "IntakeOn",
-      "waypointRelativePos": 0.5354330708661419,
+      "waypointRelativePos": 0.8458942632171014,
       "endWaypointRelativePos": 1.0,
       "command": {
         "type": "named",

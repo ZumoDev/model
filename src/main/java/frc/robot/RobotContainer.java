@@ -145,6 +145,15 @@ NamedCommands.registerCommand(
     ).withTimeout(5.0)
 );
 
+NamedCommands.registerCommand(
+    "IntakeDownUpDown",
+    Commands.sequence(
+        new IntakePos(intakeSub, 3.3).withTimeout(0.2),
+        new IntakePos(intakeSub, 0).withTimeout(0.2),
+        new IntakePos(intakeSub, 3.3).withTimeout(0.2)
+    )
+);
+
           autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Autonomous", autoChooser);
 
