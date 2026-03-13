@@ -108,10 +108,6 @@ public class RobotContainer {
  // ===== NAMED COMMANDS =====
 
 NamedCommands.registerCommand(
-    "IntakeDown",
-    new IntakePos(intakeSub, 3.3).withTimeout(1)
-);
-NamedCommands.registerCommand(
     "IntakeUp",
     new IntakePos(intakeSub, 0).withTimeout(1)
 );
@@ -125,7 +121,7 @@ NamedCommands.registerCommand(
     "StartShooter",
     Commands.parallel(
         new StartShooter(shooterSub, intakeSub, 1, false, () -> null),
-        new Indexer(intakeSub, -0.5)
+        new Indexer(intakeSub,-0.5)
     ).withTimeout(2.0)
 );
 
@@ -148,11 +144,12 @@ NamedCommands.registerCommand(
 NamedCommands.registerCommand(
     "IntakeDownUpDown",
     Commands.sequence(
-        new IntakePos(intakeSub, 3.3).withTimeout(0.2),
+        new IntakePos(intakeSub, 3.25).withTimeout(0.2),
         new IntakePos(intakeSub, 0).withTimeout(0.2),
-        new IntakePos(intakeSub, 3.3).withTimeout(0.2)
+        new IntakePos(intakeSub, 3.25).withTimeout(0.2)
     )
 );
+NamedCommands.registerCommand("IntakeDown", new IntakePos(intakeSub, 3.25).withTimeout(1.0));
 
           autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Autonomous", autoChooser);
