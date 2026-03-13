@@ -32,6 +32,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Ports;
 
+//verificar que no haya errores electronicos o mecanicos
+//verificar que la configuracion se suba al motor por rev hwd client 2
+//cambiar por una pastilla de 20 o 30
+//verificar que las ids no se muevan caramba
+//si se bota la pastilla, es mecanico
+//veriifcar que no haya cables safados que hagan cortos 
+//puede ser que la reduccion de los engranes sea muy baja y el motor se sobredemande; es mecanico
+//que no haya un pinche tornillote que lo afecte
+//se deberia mover el intake solo con un motor
+
 // Subsistema de la intake y el indexer del robot
 public class IntakeSubsystem extends SubsystemBase {
 

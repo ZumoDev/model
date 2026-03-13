@@ -3,12 +3,12 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.45,
+        "x": 3.0,
         "y": 4.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.7,
+        "x": 3.25,
         "y": 4.0
       },
       "isLocked": false,
@@ -20,8 +20,8 @@
         "y": 5.975
       },
       "prevControl": {
-        "x": 0.35,
-        "y": 5.975
+        "x": 3.6382819905213264,
+        "y": 6.732357819905213
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,41 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "IntakeDown",
-      "waypointRelativePos": 0.31450719822812867,
-      "endWaypointRelativePos": 0.362204724409449,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "IntakeDown"
-        }
-      }
-    },
-    {
-      "name": "IntakeUp",
-      "waypointRelativePos": 0.44544431946006685,
-      "endWaypointRelativePos": 0.48818897637795167,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "IntakeUp"
-        }
-      }
-    },
-    {
-      "name": "IntakeDown",
-      "waypointRelativePos": 0.503937007874016,
-      "endWaypointRelativePos": 0.5714285714285717,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "IntakeDown"
-        }
-      }
-    },
-    {
       "name": "IntakeOn",
-      "waypointRelativePos": 0.5849268841394828,
+      "waypointRelativePos": 0.8548931383577059,
       "endWaypointRelativePos": 1.0,
       "command": {
         "type": "named",

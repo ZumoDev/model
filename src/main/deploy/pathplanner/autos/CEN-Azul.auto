@@ -5,15 +5,33 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "0-0-Cen"
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "ShooterOn"
+            "name": "ShooterInitial"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeDown"
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "0-Cen"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeOn"
           }
         },
         {

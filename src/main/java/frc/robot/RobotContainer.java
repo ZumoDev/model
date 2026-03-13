@@ -105,13 +105,8 @@ public class RobotContainer {
          // ===== NAMED COMMANDS =====
 
         NamedCommands.registerCommand(
-            "IntakeDown",
-            new IntakePos(intakeSub, 3.3).withTimeout(1)
-        );
-
-        NamedCommands.registerCommand(
-        "IntakeUp",
-        new IntakePos(intakeSub, 0).withTimeout(1)
+            "IntakeUp",
+            new IntakePos(intakeSub, 0).withTimeout(1)
         );
 
         NamedCommands.registerCommand(
@@ -121,6 +116,14 @@ public class RobotContainer {
 
         NamedCommands.registerCommand(
             "StartShooter",
+            Commands.parallel(
+                new StartShooter(shooterSub, intakeSub, 1, false, () -> null),
+                new Indexer(intakeSub,-0.5)
+            ).withTimeout(2.0)
+        );
+
+        NamedCommands.registerCommand(
+            "ShooterInitial",
             Commands.parallel(
                 new StartShooter(shooterSub, intakeSub, 1, false, () -> null),
                 new Indexer(intakeSub, -0.5)
@@ -135,10 +138,20 @@ public class RobotContainer {
             ).withTimeout(5.0)
         );
 
-        autoChooser = AutoBuilder.buildAutoChooser();
-        SmartDashboard.putData("Autonomous", autoChooser);
+        NamedCommands.registerCommand(
+            "IntakeDownUpDown",
+            Commands.sequence(
+                new IntakePos(intakeSub, 3.25).withTimeout(0.2),
+                new IntakePos(intakeSub, 0).withTimeout(0.2),
+                new IntakePos(intakeSub, 3.25).withTimeout(0.2)
+            )
+        );
+        NamedCommands.registerCommand("IntakeDown", new IntakePos(intakeSub, 3.25).withTimeout(1.0));
 
-        configureBindings();
+                autoChooser = AutoBuilder.buildAutoChooser();
+                SmartDashboard.putData("Autonomous", autoChooser);
+
+                configureBindings();
     }
 
     private void configureBindings() {
