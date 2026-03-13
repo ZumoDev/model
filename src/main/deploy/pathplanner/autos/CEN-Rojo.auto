@@ -5,15 +5,27 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "0-CR"
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "ShooterOn"
+            "name": "ShooterInitial"
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "1-CR"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeOn"
           }
         },
         {

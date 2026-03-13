@@ -5,9 +5,15 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "0-0-Cen"
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "ShooterOn"
+            "name": "ShooterInitial"
           }
         },
         {
