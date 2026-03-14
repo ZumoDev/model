@@ -4,31 +4,36 @@
     {
       "anchor": {
         "x": 2.6,
-        "y": 4.0
+        "y": 6.0
       },
       "prevControl": null,
       "nextControl": {
         "x": 1.6826238738738741,
-        "y": 5.081869369369369
+        "y": 7.081869369369369
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.729324324324325,
-        "y": 7.481768018018019
+        "x": 7.8,
+        "y": 5.9
       },
       "prevControl": {
-        "x": 0.8431531531531533,
-        "y": 8.06445945945946
+        "x": 6.383659909909911,
+        "y": 8.854549549549551
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5666666666666661,
+      "rotationDegrees": 0.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -42,13 +47,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -90.0
   },
   "reversed": false,
   "folder": "Alianza-Azul-Centro",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -45.0
   },
   "useDefaultConstraints": true
 }
