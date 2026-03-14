@@ -60,7 +60,7 @@
   "folder": "Alianza-Azul-Centro",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -40.0
+    "rotation": -45.0
   },
   "useDefaultConstraints": true
 }
