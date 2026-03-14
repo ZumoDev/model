@@ -126,7 +126,7 @@ NamedCommands.registerCommand(
     ).withTimeout(2.0)
 );
 
-NamedCommands.registerCommand(
+/*NamedCommands.registerCommand(
     "ShooterInitial",
     Commands.parallel(
         new StartShooter(shooterSub, intakeSub, 1, true, this::getClosestAprilTag),
@@ -150,8 +150,8 @@ NamedCommands.registerCommand(
             new Indexer(intakeSub, 0.5)
         )
     ).withTimeout(4.0)
-);
-/*NamedCommands.registerCommand(
+);*/
+NamedCommands.registerCommand(
     "ShooterInitial",
     Commands.parallel(
         new StartShooter(shooterSub, intakeSub, 1, false, () -> null),
@@ -163,7 +163,7 @@ NamedCommands.registerCommand(
      Commands.parallel(
         new StartShooter(shooterSub, intakeSub, 1, false, () -> null),
         Commands.sequence(Commands.waitSeconds(0.5), new Indexer(intakeSub, -0.5).withTimeout(4.0)))
-); */
+); 
 
 NamedCommands.registerCommand(
     "IntakeDownUpDown",
