@@ -45,6 +45,12 @@
           "data": {
             "name": "ShooterOn"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ZN_Azul"
+          }
         }
       ]
     }
